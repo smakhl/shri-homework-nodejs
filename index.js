@@ -1,46 +1,60 @@
 const express = require('express');
 const app = express();
-const port = 8000;
-const events = require('./events.json').events;
-const eventTypes = new Set(events.map(e => e.type));
-console.log(eventTypes)
+var bodyParser = require('body-parser');
+const { getServerUptime, getDistinctEvents } = require("./helpers");
+require('dotenv').config();
+const db = require('./events.json');
+const pageNotFoundResponse = `<h1>Page not found</h1>`;
 
-app.get('/', (req, res) => {
-    const uptime = getUptime();
-    res.send(`${uptime}`);
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => res.send(getServerUptime()));
+app.post('/', (req, res) => res.send(getServerUptime()));
+
+app.get('/api/events', validateTypeReqParams, eventsResponse);
+app.post('/api/events', validateTypeReqParams, eventsResponse);
+
+app.get('*', (req, res) => res.status(404).send(pageNotFoundResponse));
+app.post('*', (req, res) => res.status(404).send(pageNotFoundResponse));
+
+app.use((err, request, response, next) => {
+    console.log(err);
+    response.status(500).send(err);
+})
+
+app.listen(process.env.API_PORT, () => {
+    console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`)
 });
 
-app.get('/api/events', validateType, (req, res) => {
-    if (req.query && req.query.type) {
-        const types = req.query.type.split(":");
-        res.send(types);
-    }
-    else
-        res.send(events);
-});
-
-app.get('*', (req, res) => {
-    res.status(404).send(`<h1>Page not found</h1>`);
-});
-
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-function getUptime() {
-    const uptimeInSecs = Math.floor(process.uptime());
-    const date = new Date(null);
-    date.setSeconds(uptimeInSecs);
-    return date.toISOString().substr(11, 8);
-}
-
-function validateType(err, req, res, next) {
-    if (req.query && req.query.type) {
-        const types = req.query.type.split(":");
-        types.forEach(type => {
-            console.log("ha")
-            if (!eventTypes.has(type)){
+function validateTypeReqParams(req, res, next) {
+    const request = req.query || req.body;
+    if (request.type) {
+        const requestedTypes = request.type.split(":");
+        const existingTypes = getDistinctEvents(db);
+        requestedTypes.forEach(type => {
+            if (!existingTypes.has(type)) {
                 res.status(400).send("Incorrect type");
+                return next("Incorrect type caught in middleware: " + type);
             }
         });
     }
-    // next();
+    next();
+}
+
+function eventsResponse(req, res) {
+    let response = db;
+    const request = req.query || req.body;
+    if (request.type) {
+        const requestedTypes = request.type.split(":");
+        const filteredEvents = db.events.filter(e => requestedTypes.includes(e.type));
+        response = { events: [...filteredEvents] };
+    }
+
+    if (request.limit || request.skip) {
+        const skip = request.skip || 0;
+        const limit = request.limit || process.env.DEFAULT_LIMIT;
+        response = { events: response.events.slice(+skip, +skip + +limit) };
+    }
+
+    res.send(response);
 }
