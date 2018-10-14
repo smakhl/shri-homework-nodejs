@@ -1,5 +1,6 @@
 const fs = require("fs");
 const express = require("express");
+const cors = require("cors");
 const app = express();
 var bodyParser = require("body-parser");
 const { getServerUptime, getDistinctEvents } = require("./helpers");
@@ -8,6 +9,7 @@ let db = {};
 const pageNotFoundResponse = "<h1>Page not found</h1>";
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 app.all("/status", (req, res) => res.send(getServerUptime()));
 
