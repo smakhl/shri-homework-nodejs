@@ -1,10 +1,11 @@
-const express = require('express');
+const fs = require("fs");
+const express = require("express");
 const app = express();
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 const { getServerUptime, getDistinctEvents } = require("./helpers");
-require('dotenv').config();
-const db = require('./events.json');
-const pageNotFoundResponse = `<h1>Page not found</h1>`;
+require("dotenv").config();
+let db = {};
+const pageNotFoundResponse = "<h1>Page not found</h1>";
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -19,10 +20,17 @@ app.post('*', (req, res) => res.status(404).send(pageNotFoundResponse));
 app.use((err, request, response, next) => {
     console.log(err);
     response.status(500).send(err);
-})
+});
+
+fs.readFile("events.json", "utf8", (err, data) => {
+    if (err) throw err;
+    console.log(data);
+
+    db = JSON.parse(data);
 
 app.listen(process.env.API_PORT, () => {
-    console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`)
+        console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`);
+    });
 });
 
 function validateTypeReqParams(req, res, next) {
