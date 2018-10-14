@@ -11,11 +11,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.all("/status", (req, res) => res.send(getServerUptime()));
 
-app.get('/api/events', validateTypeReqParams, eventsResponse);
-app.post('/api/events', validateTypeReqParams, eventsResponse);
+app.all("/api/events", validateTypeReqParams, eventsResponse);
 
-app.get('*', (req, res) => res.status(404).send(pageNotFoundResponse));
-app.post('*', (req, res) => res.status(404).send(pageNotFoundResponse));
+app.all("*", (req, res) => res.status(404).send(pageNotFoundResponse));
 
 app.use((err, request, response, next) => {
     console.log(err);
@@ -28,10 +26,11 @@ fs.readFile("events.json", "utf8", (err, data) => {
 
     db = JSON.parse(data);
 
-app.listen(process.env.API_PORT, () => {
+    app.listen(process.env.API_PORT, () => {
         console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`);
     });
 });
+
 
 function validateTypeReqParams(req, res, next) {
     const request = req.query || req.body;
