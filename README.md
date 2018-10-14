@@ -4,7 +4,7 @@
 npm i
 npm start
 ```
-* Аптайм сервера: http://localhost:8000
+* Аптайм сервера: http://localhost:8000/status
 * Все события: http://localhost:8000/api/events
 * Отфильтрованные по типу события: 
   1. http://localhost:8000/api/events?type=info

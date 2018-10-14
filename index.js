@@ -8,8 +8,7 @@ const pageNotFoundResponse = `<h1>Page not found</h1>`;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.send(getServerUptime()));
-app.post('/', (req, res) => res.send(getServerUptime()));
+app.all("/status", (req, res) => res.send(getServerUptime()));
 
 app.get('/api/events', validateTypeReqParams, eventsResponse);
 app.post('/api/events', validateTypeReqParams, eventsResponse);
