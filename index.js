@@ -22,15 +22,11 @@ app.use((err, request, response, next) => {
 
 fs.readFile("events.json", "utf8", (err, data) => {
     if (err) throw err;
-    console.log(data);
-
     db = JSON.parse(data);
-
     app.listen(process.env.API_PORT, () => {
         console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`);
     });
 });
-
 
 function validateTypeReqParams(req, res, next) {
     const request = req.query || req.body;
