@@ -1,5 +1,6 @@
 # shri-homework-nodejs
 
+> Deployed to heroku https://shri-smarthouse-api.herokuapp.com/
 ```
 npm i
 npm start
