@@ -4,9 +4,10 @@ const cors = require("cors");
 const app = express();
 var bodyParser = require("body-parser");
 const { getServerUptime, getDistinctEvents } = require("./helpers");
-require("dotenv").config();
 let db = {};
 const pageNotFoundResponse = "<h1>Page not found</h1>";
+const port=process.env.PORT || 8000
+const DEFAULT_LIMIT = 30
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -25,8 +26,8 @@ app.use((err, request, response, next) => {
 fs.readFile("events.json", "utf8", (err, data) => {
     if (err) throw err;
     db = JSON.parse(data);
-    app.listen(process.env.API_PORT, () => {
-        console.log(`Smarthouse API started on http://localhost:${process.env.API_PORT}`);
+    app.listen(port, () => {
+        console.log(`Smarthouse API started on http://localhost:${port}`);
     });
 });
 
@@ -56,7 +57,7 @@ function eventsResponse(req, res) {
 
     if (request.limit || request.skip) {
         const skip = request.skip || 0;
-        const limit = request.limit || process.env.DEFAULT_LIMIT;
+        const limit = request.limit || DEFAULT_LIMIT;
         response = { events: response.events.slice(+skip, +skip + +limit) };
     }
 
