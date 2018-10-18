@@ -6,8 +6,8 @@ var bodyParser = require("body-parser");
 const { getServerUptime, getDistinctEvents } = require("./helpers");
 let db = {};
 const pageNotFoundResponse = "<h1>Page not found</h1>";
-const port=process.env.PORT || 8000
-const DEFAULT_LIMIT = 30
+const port = process.env.PORT || 8000;
+const DEFAULT_LIMIT = 30;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -32,9 +32,9 @@ fs.readFile("events.json", "utf8", (err, data) => {
 });
 
 function validateTypeReqParams(req, res, next) {
-    const request = req.query || req.body;
-    if (request.type) {
-        const requestedTypes = request.type.split(":");
+    const type = req.body.type || req.query.type;
+    if (type) {
+        const requestedTypes = type.split(":");
         const existingTypes = getDistinctEvents(db);
         requestedTypes.forEach(type => {
             if (!existingTypes.has(type)) {
@@ -48,16 +48,18 @@ function validateTypeReqParams(req, res, next) {
 
 function eventsResponse(req, res) {
     let response = db;
-    const request = req.query || req.body;
-    if (request.type) {
-        const requestedTypes = request.type.split(":");
+    const type = req.body.type || req.query.type;
+    if (type) {
+        const requestedTypes = type.split(":");
         const filteredEvents = db.events.filter(e => requestedTypes.includes(e.type));
         response = { events: [...filteredEvents] };
     }
 
-    if (request.limit || request.skip) {
-        const skip = request.skip || 0;
-        const limit = request.limit || DEFAULT_LIMIT;
+    const reqLimit = req.body.limit || req.query.limit;
+    const reqSkip = req.body.skip || req.query.skip;
+    if (reqLimit || reqSkip) {
+        const skip = reqSkip || 0;
+        const limit = reqLimit || DEFAULT_LIMIT;
         response = { events: response.events.slice(+skip, +skip + +limit) };
     }
 
