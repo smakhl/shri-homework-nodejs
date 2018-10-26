@@ -9,7 +9,6 @@ export function getServerUptime() {
 
 export function getEvents() {
     return new Promise<ApiResponse>((resolve, reject) => {
-
         fs.readFile(`events.json`, "utf8", (err, data) => {
             if (err) {
                 reject(err);
