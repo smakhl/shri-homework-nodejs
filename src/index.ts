@@ -12,9 +12,9 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.all("/status", (req, res) => res.send(getServerUptime()));
+app.all("/status", (req: express.Request, res: express.Response) => res.send(getServerUptime()));
 app.all("/api/events", validateTypeReqParams, eventsResponse);
-app.all("*", (req, res) => res.status(404).send(pageNotFoundResponse));
+app.all("*", (req: express.Request, res: express.Response) => res.status(404).send(pageNotFoundResponse));
 
 app.use((err: any, request: express.Request, response: express.Response, next: express.NextFunction) => {
     process.stdout.write(err.stack);

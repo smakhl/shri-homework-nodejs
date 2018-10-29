@@ -9,8 +9,7 @@ export async function eventsResponse(req: express.Request, res: express.Response
     if (type !== undefined) {
         const requestedTypes = type.split(":");
         const filteredEvents = eventsJson.events ?
-            eventsJson.events.filter((e: SmartHomeEvent) => requestedTypes.includes(e.type)) :
-            [];
+            eventsJson.events.filter((e: SmartHomeEvent) => requestedTypes.includes(e.type)) : [];
         response.events = [...filteredEvents];
     } else {
         response.events = eventsJson.events;
