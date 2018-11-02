@@ -1,7 +1,7 @@
 import bodyParser = require("body-parser");
 import cors = require("cors");
 import express = require("express");
-import { eventsResponse } from "./controllers";
+import { eventsResponse, cctvGet } from "./controllers";
 import { getServerUptime } from "./helpers";
 import { validateTypeReqParams } from "./middleware";
 
@@ -14,6 +14,7 @@ app.use(cors());
 
 app.all("/status", (req: express.Request, res: express.Response) => res.send(getServerUptime()));
 app.all("/api/events", validateTypeReqParams, eventsResponse);
+app.get("/api/cctv", cctvGet);
 app.all("*", (req: express.Request, res: express.Response) => res.status(404).send(pageNotFoundResponse));
 
 app.use((err: any, request: express.Request, response: express.Response, next: express.NextFunction) => {

@@ -25,3 +25,30 @@ export async function eventsResponse(req: express.Request, res: express.Response
 
     res.send(response);
 }
+
+const videoStreams = [
+    {
+        brightness: 100,
+        contrast: 100,
+        url: "https://shri-smart-house.herokuapp.com/sosed%2Fmaster.m3u8",
+    },
+    {
+        brightness: 100,
+        contrast: 100,
+        url: "https://shri-smart-house.herokuapp.com/cat%2Fmaster.m3u8",
+    },
+    {
+        brightness: 100,
+        contrast: 100,
+        url: "https://shri-smart-house.herokuapp.com/dog%2Fmaster.m3u8",
+    },
+    {
+        brightness: 100,
+        contrast: 100,
+        url: "https://shri-smart-house.herokuapp.com/hall%2Fmaster.m3u8",
+    },
+];
+
+export function cctvGet(req: express.Request, res: express.Response) {
+    res.send(videoStreams);
+}
