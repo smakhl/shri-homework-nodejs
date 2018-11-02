@@ -26,7 +26,7 @@ export async function eventsResponse(req: express.Request, res: express.Response
     res.send(response);
 }
 
-const videoStreams = [
+let videoStreams = [
     {
         brightness: 100,
         contrast: 100,
@@ -50,5 +50,10 @@ const videoStreams = [
 ];
 
 export function cctvGet(req: express.Request, res: express.Response) {
+    res.send(videoStreams);
+}
+
+export function cctvSet(req: express.Request, res: express.Response) {
+    videoStreams = req.body;
     res.send(videoStreams);
 }
