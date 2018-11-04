@@ -1,7 +1,7 @@
 import bodyParser = require("body-parser");
 import cors = require("cors");
 import express = require("express");
-import { eventsResponse, cctvGet, cctvSet } from "./controllers";
+import { cctvGet, cctvSet, eventsResponse } from "./controllers";
 import { getServerUptime } from "./helpers";
 import { validateTypeReqParams } from "./middleware";
 
@@ -10,6 +10,7 @@ const port = process.env.PORT || 8000;
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 
 app.all("/status", (req: express.Request, res: express.Response) => res.send(getServerUptime()));
